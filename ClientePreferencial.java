@@ -1,0 +1,40 @@
+import java.awt.Image;
+import java.util.List;
+
+public class ClientePreferencial extends Cliente{
+    public ClientePreferencial(Localizacao localizacao, Image imagem, List<Atendente> atendentesDisponiveis) {
+        super(localizacao, imagem, atendentesDisponiveis);
+    }
+
+    public void entrarEmFila(){
+        if(!getNaFila()){          
+            List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
+            for(Atendente atendente: atendentesDisponiveis){
+                if(atendente.getPosicaoEntradaFila() == getLocalizacaoAtual()){
+                    setNaFila(true);
+                    atendente.adicionarCliente(this);
+                }
+            }
+            if(!getNaFila()){
+                setLocalizacaoDestino(getAtendenteMaisProximo().getPosicaoEntradaFila());    
+        
+            }
+    
+        }
+    }
+    
+    private Atendente getAtendenteMaisProximo(){
+        List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
+        Atendente atendenteMaisProximo = null;
+        int menorDistanciaX = Integer.MAX_VALUE;
+
+        for(Atendente atendente: atendentesDisponiveis){
+            int distanciaX = Math.abs(getLocalizacaoAtual().getX()-atendente.getPosicaoEntradaFila().getX());
+            if(menorDistanciaX > distanciaX){
+                atendenteMaisProximo = atendente;
+                menorDistanciaX = distanciaX;
+            }
+        }
+        return atendenteMaisProximo;
+    }
+}
