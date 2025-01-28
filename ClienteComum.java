@@ -9,6 +9,7 @@ public class ClienteComum extends Cliente {
 
     public void entrarEmFila(){
         if(!getNaFila()){          
+            setLocalizacaoDestino(getAtendenteMaisProximo().getPosicaoEntradaFila()); 
             List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
             for(Atendente atendente: atendentesDisponiveis){
                 if(atendente.getPosicaoEntradaFila() == getLocalizacaoAtual()){
@@ -16,11 +17,7 @@ public class ClienteComum extends Cliente {
                     atendente.adicionarCliente(this);
                 }
             }
-            if(!getNaFila()){
-                setLocalizacaoDestino(getAtendenteMaisProximo().getPosicaoEntradaFila());    
-        
-            }
-    
+               
         }
     }
     

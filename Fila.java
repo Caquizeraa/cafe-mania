@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Fila {
     private Localizacao origem;
@@ -14,7 +15,11 @@ public class Fila {
     }
 
     public Cliente getPrimeiro(){
-        return arrayFila.get(0);
+        if(arrayFila.isEmpty()){
+            return null;
+        }else{
+           return arrayFila.get(0);
+        }
     }
 
     public int getTamanho(){
@@ -26,14 +31,29 @@ public class Fila {
     }
 
     public void removerPrimeiro(){
-        arrayFila.remove(0);
-        tamanho--;
+        if (!arrayFila.isEmpty()) {
+            Iterator<Cliente> iterator = arrayFila.iterator();
+            if (iterator.hasNext()) {
+                iterator.next();
+                iterator.remove();
+            }
+            tamanho--;
+            updatePosicaoEntrada();
+        }
     }
 
     public void adicionarCliente(Cliente cliente){
         arrayFila.add(cliente);
         tamanho++;
-        posicaoEntrada = new Localizacao(origem.getX(),cliente.getLocalizacaoAtual().getY()-1);
+        updatePosicaoEntrada();
     }
 
+    private void updatePosicaoEntrada() {
+        if (!arrayFila.isEmpty()) {
+            Cliente ultimoCliente = arrayFila.get(arrayFila.size() - 1);
+            posicaoEntrada = new Localizacao(origem.getX(), ultimoCliente.getLocalizacaoAtual().getY() + 1);
+        } else {
+            posicaoEntrada = origem;
+        }
+    }
 }

@@ -47,16 +47,16 @@ public class Simulacao {
     }
 
     private void executarUmPasso() {
-        int largura = mapa.getLargura();
-        int altura = mapa.getAltura();
-
-        /*
         Random rand = new Random();
-        if(rand.nextInt(2)==1){
-            criarCliente(rand, largura, altura);
+        int criarClienteOdd = rand.nextInt(10);
+        if(criarClienteOdd==9){
+            criarCliente(rand, mapa.getLargura(), mapa.getAltura());
         }
-        */
 
+        for(Atendente atendente: atendentes){
+            atendente.executarAcao();
+        }
+    
         Iterator<Cliente> iterator = clientes.iterator();
         while (iterator.hasNext()) {
             Cliente cliente = iterator.next();
@@ -65,15 +65,9 @@ public class Simulacao {
             
             if (cliente.getLocalizacaoAtual().getY() > 0) {
                 mapa.adicionarItem(cliente);
-            } else {
-                System.out.println("Cliente removido: " + cliente);
-                mapa.removerItem(cliente);
+            } else if (cliente.getLocalizacaoAtual().getY() == 0 && cliente.getNaFila() == false) {
                 iterator.remove(); // Remove the client from the list
             }
-        }
-
-        for(Atendente atendente: atendentes){
-            atendente.executarAcao();
         }
         janelaSimulacao.executarAcao();
     }
@@ -106,47 +100,36 @@ public class Simulacao {
     }
 
     private void criarCliente(Random rand, int largura, int altura){
-        /*
         int clientePreferencialOdd = rand.nextInt(4);
         Cliente cliente;
         Image imagem;
-        //linhas teste
-        Localizacao loc = new Localizacao(rand.nextInt(largura),rand.nextInt(altura));
-        Localizacao destino = new Localizacao(rand.nextInt(largura),rand.nextInt(altura));
+
+        Localizacao loc = new Localizacao(rand.nextInt(largura),altura-1);
         switch (clientePreferencialOdd) {
             case 0:
                 imagem = new ImageIcon(getClass().getResource("Imagens/cliente1.png")).getImage();
-                cliente = new ClienteComum(loc, imagem);
+                cliente = new ClienteComum(loc, imagem, atendentes);
                 break;
             case 1:
                 imagem = new ImageIcon(getClass().getResource("Imagens/cliente2.png")).getImage();
-                cliente = new ClienteComum(loc, imagem);
+                cliente = new ClienteComum(loc, imagem, atendentes);
                 break;
             case 2:
                 imagem = new ImageIcon(getClass().getResource("Imagens/cliente3.png")).getImage();
-                cliente = new ClienteComum(loc, imagem);
+                cliente = new ClienteComum(loc, imagem, atendentes);
                 break;
             case 3:
                 imagem = new ImageIcon(getClass().getResource("Imagens/clientePreferencial.png")).getImage();
-                cliente = new ClientePreferencial(loc, imagem);
+                cliente = new ClienteComum(loc, imagem, atendentes);
                 break;
             default:
                 imagem = new ImageIcon(getClass().getResource("Imagens/cliente1.png")).getImage();
-                cliente = new ClienteComum(loc, imagem);
+                cliente = new ClienteComum(loc, imagem, atendentes);
                 break;
         }
-        */
-
-        Cliente cliente1, cliente2;
-        cliente1 = new ClienteComum(new Localizacao(18, 24), new ImageIcon(getClass().getResource("Imagens/cliente1.png")).getImage(), getAtendentes());
-        
-        cliente2 = new ClientePreferencial(new Localizacao(18, 15), new ImageIcon(getClass().getResource("Imagens/clientePreferencial.png")).getImage(), getAtendentes());
-        clientes.add(cliente1); clientes.add(cliente2);
-
-        cliente1.entrarEmFila();
-        cliente2.entrarEmFila();
-        mapa.adicionarItem(cliente1);
-        mapa.adicionarItem(cliente2);
+        clientes.add(cliente);
+        mapa.adicionarItem(cliente);
+        cliente.entrarEmFila();
     }
 
     public List<Atendente> getAtendentes(){

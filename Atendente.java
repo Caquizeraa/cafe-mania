@@ -25,9 +25,13 @@ public class Atendente extends EntidadesCenario{
     }
 
     public void atenderCliente(){
-        fila.getPrimeiro().setAtendido();
-        fila.removerPrimeiro();
-        atendendo = false;
+        atendendo = true;
+        Cliente cliente = fila.getPrimeiro();
+        if (cliente != null){
+            cliente.setAtendido();
+            fila.removerPrimeiro();
+            atendendo = false;
+        }
     }
 
     public void adicionarCliente(Cliente cliente){
@@ -37,7 +41,6 @@ public class Atendente extends EntidadesCenario{
     public void executarAcao(){
         if(!atendendo && fila.getTamanho()>0){
             atenderCliente();
-            atendendo = true;
         }
     }
 

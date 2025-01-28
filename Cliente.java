@@ -38,6 +38,8 @@ public abstract class Cliente extends EntidadesCenario {
             Localizacao proximaLocalizacao = getLocalizacaoAtual().proximaLocalizacao(localizacaoDestino);
             setLocalizacaoAtual(proximaLocalizacao);
         }
+
+       
     } 
 
     public Boolean getNaFila(){
@@ -46,6 +48,7 @@ public abstract class Cliente extends EntidadesCenario {
 
     public void setAtendido(){
         atendido = true;
+        setNaFila(false);
     }
 
     public void setNaFila(Boolean naFila){
