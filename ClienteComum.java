@@ -9,28 +9,58 @@ public class ClienteComum extends Cliente {
         super(localizacao, imagem, atendentesDisponiveis, clientesExistentes);
     }
 
-    // Método que retorna o atendente disponível mais próximo de cliente comum
-    public Atendente getAtendenteMaisProximo(){
+    // Método que retorna o atendente disponível com a menor fila de cliente comum
+    public void escolherAtendente(){
         // Pega a lista de atendentes disponíveis
         List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
-        Atendente atendenteMaisProximo = null;
-        int menorDistanciaX = Integer.MAX_VALUE;
+        Atendente atendenteAtual = null;
+        int tamanhoMenorFila = Integer.MAX_VALUE;
+        int distanciaAtual = Integer.MAX_VALUE;
+        String tipoAtual = "";
 
         // Para cada atendente
         for(Atendente atendente: atendentesDisponiveis){
-            // Calcula a distncia até a entrada de seu fila
-            int distanciaX = Math.abs(getLocalizacaoAtual().getX()-atendente.getPosicaoEntradaFila().getX());
-            // Se a distancia for menor que a menor distancia salva
-            if(menorDistanciaX > distanciaX){
-                // Se o atendente for comum, ou for preferencial e não tiver ninguém na fila
-                if((atendente.getTipo().equals("Comum")) || (atendente.getTamanhoFila()==0)){
-                    // Configura este como mais proximo e atualiza a menor distancia
-                    atendenteMaisProximo = atendente;
-                    menorDistanciaX = distanciaX;
+            // Pega o tamanho da fila
+            int tamanhoFila = atendente.getTamanhoFila();
+            // Se o atendente analisado for comum
+            if(atendente.getTipo().equals("Comum")){
+                // Se o atual for Preferencial e o tamanho da fila do analisado for 0, preferir o analisado
+                // Garantindo que entre comum e preferencial vazios, prefira o comum
+                if(tipoAtual.equals("Preferencial") && tamanhoFila == 0){
+                    atendenteAtual = atendente;
+                    tamanhoMenorFila = tamanhoFila;
+                    tipoAtual = atendente.getTipo();
+                    distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+                }
+                // Se o analisado nao for preferencial e a fila salva for menor que a fila analisada
+                else if(tamanhoMenorFila > tamanhoFila){
+                    // Trocar
+                    atendenteAtual = atendente;
+                    tamanhoMenorFila = tamanhoFila;
+                    tipoAtual = atendente.getTipo();
+                    distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+                }
+                // Buscando o mais perto dos menores
+                else if(tamanhoMenorFila == tamanhoFila && atendenteAtual != null){
+                    int distancia = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+                    if(distanciaAtual>distancia){
+                        atendenteAtual = atendente;
+                        tamanhoMenorFila = tamanhoFila;
+                        tipoAtual = atendente.getTipo();
+                        distanciaAtual = distancia;
+                    }
                 }
             }
+            // Se o analisado for preferencial, tiver uma fila vazia e o tamanho for menor que da menor fila
+            else if(atendente.getTipo().equals("Preferencial") && tamanhoFila ==0  && tamanhoMenorFila>0){
+                // Trocar
+                atendenteAtual = atendente;
+                tamanhoMenorFila = tamanhoFila;
+                tipoAtual = atendente.getTipo();
+                distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+            }
         }
-        // Retorna o mais próximo após calcular todos
-        return atendenteMaisProximo;
+        // Retorna o atendente com a menor fila após calcular todos
+        super.setAtendenteEscolhido(atendenteAtual);
     }
 }

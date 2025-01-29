@@ -22,6 +22,7 @@ public abstract class Cliente extends EntidadesCenario {
     
     /** Lista de atendentes disponiveis para este cliente */
     private List<Atendente> atendentesDisponiveis;
+    private Atendente atendenteEscolhido;
     
     /** Lista de outros clientes para verificacao de colisao */  
     private List<Cliente> clientesExistentes;
@@ -40,8 +41,10 @@ public abstract class Cliente extends EntidadesCenario {
         localizacaoDestino = null;
         naFila = false;
         atendido = false;
+        atendenteEscolhido = null;
         this.atendentesDisponiveis = atendentesDisponiveis;
         this.clientesExistentes = clientesExistentes;
+        escolherAtendente();
     }   
  
     /**
@@ -135,12 +138,17 @@ public abstract class Cliente extends EntidadesCenario {
         this.clientesExistentes = clientesExistentes;
     }
 
+    // Setter de Atendente Escolhido
+    public void setAtendenteEscolhido(Atendente atendenteEscolhido){
+        this.atendenteEscolhido = atendenteEscolhido;
+    }
+
     // Método que faz o cliente entrar na fila
     public void entrarEmFila(){
         // Se não está na fila
         if(!getNaFila()){          
-            // Seta o destino como o atendente mais próximo
-            setLocalizacaoDestino(getAtendenteMaisProximo().getPosicaoEntradaFila()); 
+            // Seta o destino como o atendente escolhido
+            setLocalizacaoDestino(atendenteEscolhido.getPosicaoEntradaFila()); 
             // Confere se entrou em alguma das filas
             List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
             for(Atendente atendente: atendentesDisponiveis){
@@ -154,6 +162,6 @@ public abstract class Cliente extends EntidadesCenario {
         }
     }
 
-    //Metódo que calcula o atendente disponível mais próximo
-    public abstract Atendente getAtendenteMaisProximo();
+    //Metódo que calcula o atendente disponível com a menor fila
+    public abstract void escolherAtendente();
 }
