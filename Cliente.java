@@ -2,38 +2,72 @@ import java.awt.Image;
 import java.util.List;
 
 /**
- * Representa os veiculos da simulacao.
- * @author David J. Barnes and Michael Kolling and Luiz Merschmann
- */
-
- // Representa a entidade Cliente
+* Representa um cliente no sistema de atendimento.
+* Esta classe abstrata define o comportamento basico de clientes
+* que precisam ser atendidos, incluindo sua movimentacao no mapa e
+* interacao com filas de atendimento.
+* 
+* @author [Nome do Autor]
+* @version 1.0
+* @see EntidadesCenario
+* @see Atendente
+* @see Localizacao
+*/
 public abstract class Cliente extends EntidadesCenario {
+    /** Local para onde o cliente pretende se mover */
     private Localizacao localizacaoDestino;
-    private Boolean naFila, atendido; // Váriaveis que informam o estado do cliente
-    private List<Atendente> atendentesDisponiveis; // Lista de atendentes disponíveis (para cliente se locomover até)
-    private List<Cliente> clientesExistentes; // Lista de clientes existentes (para evitar colisões)
-
-    // Cliente recebe uma Localizacao, Imagem, Lista de Atendentes Disponíveis e Lista de Clientes Existentes
+    
+    /** Indicadores do estado atual do cliente */
+    private boolean naFila, atendido;
+    
+    /** Lista de atendentes disponiveis para este cliente */
+    private List<Atendente> atendentesDisponiveis;
+    
+    /** Lista de outros clientes para verificacao de colisao */  
+    private List<Cliente> clientesExistentes;
+ 
+    /**
+     * Cria um novo cliente com localizacao e imagem especificas.
+     * O cliente e inicializado sem destino, fora da fila e nao atendido.
+     *
+     * @param localizacao posicao inicial do cliente
+     * @param imagem representacao visual do cliente
+     * @param atendentesDisponiveis lista de atendentes que podem atender este cliente
+     * @param clientesExistentes lista de outros clientes no sistema
+     */
     public Cliente(Localizacao localizacao, Image imagem, List<Atendente> atendentesDisponiveis, List<Cliente> clientesExistentes) {
         super(localizacao, imagem);
-        // Nasce sem destino, não está na fila e não foi atendido
         localizacaoDestino = null;
         naFila = false;
         atendido = false;
         this.atendentesDisponiveis = atendentesDisponiveis;
         this.clientesExistentes = clientesExistentes;
     }   
-
-    // Getter e Setter de LocalizacaoDestino
+ 
+    /**
+     * Retorna a localizacao para onde o cliente esta se dirigindo.
+     *
+     * @return o destino atual do cliente
+     */
     public Localizacao getLocalizacaoDestino() {
         return localizacaoDestino;
     }
    
+    /**
+     * Define um novo destino para o cliente.
+     *
+     * @param localizacaoDestino nova localizacao de destino
+     */
     public void setLocalizacaoDestino(Localizacao localizacaoDestino) {
         this.localizacaoDestino = localizacaoDestino;
     }
     
-    // Método que executa a ação do Cliente
+    /**
+     * Executa a acao do cliente a cada ciclo da simulacao.
+     * Se foi atendido, move-se para a saida.
+     * Se nao esta na fila, procura uma fila para entrar.
+     * Move-se em direcao ao seu destino se houver caminho livre.
+     */
     public void executarAcao(){       
         // Se foi atendido, vai para a saída
         if(atendido){

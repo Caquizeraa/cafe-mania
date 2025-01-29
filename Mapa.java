@@ -1,6 +1,6 @@
 /**
  * Representa um mapa com todos os itens que participam da simulacao
- * @author David J. Barnes and Michael Kolling and Luiz Merschmann
+ * @author David J. Barnes and Michael Kolling and Luiz Merschmann and Isac Cunha
  */
 public class Mapa {
     private EntidadesCenario[][] itens;
@@ -27,27 +27,50 @@ public class Mapa {
         this(LARGURA_PADRAO,ALTURA_PADRAO);
     }
     
-    public void adicionarItem(EntidadesCenario e){
+    /**
+     * Adiciona uma entidade ao mapa na posicao especificada
+     * 
+     * @param e - entidade a ser adicionada ao mapa
+     */
+    public void adicionarItem(EntidadesCenario e) {
         itens[e.getLocalizacaoAtual().getX()][e.getLocalizacaoAtual().getY()] = e;
     }
-    
-    public void removerItem(EntidadesCenario e){
+
+    /**
+     * Remove uma entidade do mapa
+     * 
+     * @param e - entidade a ser removida do mapa
+     */
+    public void removerItem(EntidadesCenario e) {
         itens[e.getLocalizacaoAtual().getX()][e.getLocalizacaoAtual().getY()] = null;
     }
-    
-    public void atualizarMapa(EntidadesCenario e){
-        removerItem(e);
-        adicionarItem(e);
-    }
-    
-    public EntidadesCenario getItem(int x, int y){
+
+    /**
+     * Retorna a entidade localizada na posicao especifica do mapa (dada pelos
+     * eixos x e y)
+     * 
+     * @param x coordenada X da posicao desejada
+     * @param y coordenada Y da posicao desejada
+     * @return a entidade na posição dada
+     */
+    public EntidadesCenario getItem(int x, int y) {
         return itens[x][y];
     }
 
+    /**
+     * Retorna a largura total do mapa
+     * 
+     * @return - largura do mapa em unidades
+     */
     public int getLargura() {
         return largura;
     }
 
+    /**
+     * Retorna a altura total do mapa
+     * 
+     * @return - altura do mapa em unidades
+     */
     public int getAltura() {
         return altura;
     }
