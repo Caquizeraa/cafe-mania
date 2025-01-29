@@ -22,26 +22,35 @@ public class ClienteComum extends Cliente {
         for(Atendente atendente: atendentesDisponiveis){
             // Pega o tamanho da fila
             int tamanhoFila = atendente.getTamanhoFila();
-            // Se o atendente analisado for comum
-            if(atendente.getTipo().equals("Comum")){
-                // Se o atual for Preferencial e o tamanho da fila do analisado for 0, preferir o analisado
-                // Garantindo que entre comum e preferencial vazios, prefira o comum
-                if(tipoAtual.equals("Preferencial") && tamanhoFila == 0){
-                    atendenteAtual = atendente;
-                    tamanhoMenorFila = tamanhoFila;
-                    tipoAtual = atendente.getTipo();
-                    distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
-                }
-                // Se o analisado nao for preferencial e a fila salva for menor que a fila analisada
-                else if(tamanhoMenorFila > tamanhoFila){
+            // Se o tamanho da fila for menor que a atual
+            if(tamanhoMenorFila > tamanhoFila){
+                // Se for comum troca
+                if(atendente.getTipo().equals("Comum")){
                     // Trocar
                     atendenteAtual = atendente;
                     tamanhoMenorFila = tamanhoFila;
                     tipoAtual = atendente.getTipo();
                     distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
                 }
-                // Buscando o mais perto dos menores
-                else if(tamanhoMenorFila == tamanhoFila && atendenteAtual != null){
+                // Se for preferencial e estiver vazia, troca
+                else if(atendente.getTipo().equals("Preferencial") && tamanhoFila == 0){
+                    atendenteAtual = atendente;
+                    tamanhoMenorFila = tamanhoFila;
+                    tipoAtual = atendente.getTipo();
+                    distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+                }
+            }
+            // Se o tamanho da fila for igual
+            else if(tamanhoMenorFila==tamanhoFila){
+                // Se a atual for preferencial troca
+                if(tipoAtual.equals("Preferencial")){
+                    atendenteAtual = atendente;
+                    tamanhoMenorFila = tamanhoFila;
+                    tipoAtual = atendente.getTipo();
+                    distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
+                }
+                // Se a atual for Comum e a analisada também, pega o mais perto
+                else if(tipoAtual.equals("Comum") && atendente.getTipo().equals("Comum")){
                     int distancia = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
                     if(distanciaAtual>distancia){
                         atendenteAtual = atendente;
@@ -50,14 +59,6 @@ public class ClienteComum extends Cliente {
                         distanciaAtual = distancia;
                     }
                 }
-            }
-            // Se o analisado for preferencial, tiver uma fila vazia e o tamanho for menor que da menor fila
-            else if(atendente.getTipo().equals("Preferencial") && tamanhoFila ==0  && tamanhoMenorFila>0){
-                // Trocar
-                atendenteAtual = atendente;
-                tamanhoMenorFila = tamanhoFila;
-                tipoAtual = atendente.getTipo();
-                distanciaAtual = Math.abs(super.getLocalizacaoAtual().getX()-atendente.getLocalizacaoAtual().getX());
             }
         }
         // Retorna o atendente com a menor fila após calcular todos
