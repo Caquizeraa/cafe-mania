@@ -1,41 +1,69 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
-// Represents uma fila (ED) no cenário, respeitando a lógica FIFO
+/**
+ * Representa uma fila no cafe-mania.
+ * A fila segue a lógica de atendimento primeiro a entrar, primeiro a sair
+ * (FIFO).
+ * 
+ * @author Isac Cunha e Otávio Sbampato
+ * @version 1.0
+ * @see Cliente
+ * @see Localizacao
+ */
 public class Fila {
     private Localizacao origem;
     private Localizacao posicaoEntrada;
     private ArrayList<Cliente> arrayFila;
 
-    // Fila recebe apenas sua localização de origem
-    public Fila(Localizacao origem){
+    /**
+     * Cria uma fila em uma determinada localização de origem.
+     *
+     * @param origem - localizacao inicial da fila
+     */
+    public Fila(Localizacao origem) {
         this.origem = origem;
         posicaoEntrada = origem;
-        arrayFila = new ArrayList<Cliente>();
+        arrayFila = new ArrayList<>();
     }
 
-    // Método que retorna o primeiro cliente da fila
-    public Cliente getPrimeiro(){
-        if(arrayFila.isEmpty()){
+    /**
+     * Retorna o primeiro cliente da fila.
+     *
+     * @return o primeiro cliente da fila ou null se a fila estiver vazia
+     */
+    public Cliente getPrimeiro() {
+        if (arrayFila.isEmpty()) {
             return null;
-        }else{
-           return arrayFila.get(0);
+        } else {
+            return arrayFila.get(0);
         }
     }
 
-    // Método que retorna o tamanho da fila
-    public int getTamanho(){
+    /**
+     * Retorna o tamanho atual da fila
+     *
+     * @return numero de clientes na fila
+     */
+    public int getTamanho() {
         return arrayFila.size();
     }
 
-    // Método que retorna a posição de entrada na fila
-    public Localizacao getPosicaoEntrada(){
+    /**
+     * Retorna a posição de entrada na fila
+     *
+     * @return localizacao onde novos clientes entram na fila
+     */
+    public Localizacao getPosicaoEntrada() {
         return posicaoEntrada;
     }
 
-    // Método que remove o primeiro cliente da fila
-    public void removerPrimeiro(){
-        // Caso a fila não esteja vazia
+    /**
+     * Remove o primeiro cliente da fila, se houver
+     * Após a remoção, a posição de entrada é atualizada
+     */
+    public void removerPrimeiro() {
+        // Caso a fila nao esteja vazia
         if (!arrayFila.isEmpty()) {
             // Remove o primeiro cliente
             Iterator<Cliente> iterator = arrayFila.iterator();
@@ -48,28 +76,34 @@ public class Fila {
         }
     }
 
-    // Método que adiciona um cliente na fila
-    public void adicionarCliente(Cliente cliente){
+    /**
+     * Adiciona um cliente ao final da fila e atualiza a posição de entrada
+     *
+     * @param cliente - cliente a ser adicionado na fila
+     */
+    public void adicionarCliente(Cliente cliente) {
         arrayFila.add(cliente);
         // Atualiza a posicao de entrada
         updateFila();
     }
 
-    // Método que atualiza a posição de entrada
+    /**
+     * Atualiza a posicao de entrada da fila e de cada cliente.
+     * Se a fila estiver vazia, a posição de entrada volta à origem.
+     */
     private void updateFila() {
-        // Se a fila não estiver vazia
+        // Se a fila nao estiver vazia
         if (!arrayFila.isEmpty()) {
-            // Posição de entrada é abaixo do ultimo cliente
+            // Posicao de entrada e abaixo do ultimo cliente
             Cliente ultimoCliente = arrayFila.get(arrayFila.size() - 1);
             posicaoEntrada = new Localizacao(origem.getX(), ultimoCliente.getLocalizacaoAtual().getY() + 1);
-            // Atualiza a posição de cada cliente
+            // Atualiza a posicao de cada cliente
             for (int i = 0; i < arrayFila.size(); i++) {
                 Cliente cliente = arrayFila.get(i);
                 cliente.setLocalizacaoDestino(new Localizacao(origem.getX(), origem.getY() + i));
             }
-        }
-        else {
-            // Posicao é a mesma da origem
+        } else {
+            // Posicao e a mesma da origem
             posicaoEntrada = origem;
         }
     }

@@ -2,41 +2,37 @@ import java.awt.Image;
 import java.util.List;
 
 /**
-* Representa um cliente no sistema de atendimento.
-* Esta classe abstrata define o comportamento basico de clientes
-* que precisam ser atendidos, incluindo sua movimentacao no mapa e
-* interacao com filas de atendimento.
-* 
-* @author [Nome do Autor]
-* @version 1.0
-* @see EntidadesCenario
-* @see Atendente
-* @see Localizacao
-*/
+ * Representa um cliente no sistema de atendimento.
+ * Eh uma classe abstrata que age como superclasse
+ * para cliente preferencial e cliente comum.
+ * 
+ * @author Pedro Militão and Gabriel Coelho Costa
+ * @version 1.0
+ * @see EntidadesCenario
+ * @see Atendente
+ * @see Localizacao
+ */
 public abstract class Cliente extends EntidadesCenario {
-    /** Local para onde o cliente pretende se mover */
     private Localizacao localizacaoDestino;
-    
-    /** Indicadores do estado atual do cliente */
     private boolean naFila, atendido;
-    
-    /** Lista de atendentes disponiveis para este cliente */
     private List<Atendente> atendentesDisponiveis;
     private Atendente atendenteEscolhido;
-    
-    /** Lista de outros clientes para verificacao de colisao */  
+
+    /** Lista de outros clientes para verificacao de colisao */
     private List<Cliente> clientesExistentes;
- 
+
     /**
-     * Cria um novo cliente com localizacao e imagem especificas.
+     * Cria um novo cliente com localizacao e imagem.
      * O cliente e inicializado sem destino, fora da fila e nao atendido.
      *
-     * @param localizacao posicao inicial do cliente
-     * @param imagem representacao visual do cliente
-     * @param atendentesDisponiveis lista de atendentes que podem atender este cliente
-     * @param clientesExistentes lista de outros clientes no sistema
+     * @param localizacao           - localizacao inicial do cliente
+     * @param imagem                - imagem do cliente
+     * @param atendentesDisponiveis - lista de atendentes que podem atender este
+     *                              cliente
+     * @param clientesExistentes    - lista de outros clientes no sistema
      */
-    public Cliente(Localizacao localizacao, Image imagem, List<Atendente> atendentesDisponiveis, List<Cliente> clientesExistentes) {
+    public Cliente(Localizacao localizacao, Image imagem, List<Atendente> atendentesDisponiveis,
+            List<Cliente> clientesExistentes) {
         super(localizacao, imagem);
         localizacaoDestino = null;
         naFila = false;
@@ -45,60 +41,67 @@ public abstract class Cliente extends EntidadesCenario {
         this.atendentesDisponiveis = atendentesDisponiveis;
         this.clientesExistentes = clientesExistentes;
         escolherAtendente();
-    }   
- 
+    }
+
     /**
-     * Retorna a localizacao para onde o cliente esta se dirigindo.
+     * Retorna a localizacao para onde o cliente esta se dirigindo
      *
-     * @return o destino atual do cliente
+     * @return destino atual do cliente
      */
     public Localizacao getLocalizacaoDestino() {
         return localizacaoDestino;
     }
-   
+
     /**
-     * Define um novo destino para o cliente.
+     * Define um novo destino para o cliente
      *
-     * @param localizacaoDestino nova localizacao de destino
+     * @param localizacaoDestino - nova localizacao de destino
      */
     public void setLocalizacaoDestino(Localizacao localizacaoDestino) {
         this.localizacaoDestino = localizacaoDestino;
     }
-    
+
     /**
      * Executa a acao do cliente a cada ciclo da simulacao.
-     * Se foi atendido, move-se para a saida.
+     * Se foi atendido, vai para a saida;
      * Se nao esta na fila, procura uma fila para entrar.
-     * Move-se em direcao ao seu destino se houver caminho livre.
+     * Vai pro seu destino se o caminho estiver livre
      */
-    public void executarAcao(){       
+    public void executarAcao() {
         // Se foi atendido, vai para a saída
-        if(atendido){
+        if (atendido) {
             setLocalizacaoDestino(new Localizacao(getLocalizacaoAtual().getX(), 0));
         }
         // Se não, se não está na fila, entra na fila
-        else if(!naFila){
+        else if (!naFila) {
             entrarEmFila();
         }
-        
+
         // Movimentação do Cliente
         Localizacao destino = getLocalizacaoDestino();
         // Se tem destino
-        if(destino != null){
+        if (destino != null) {
             // Confere para onde deve ir
             Localizacao proximaLocalizacao = getLocalizacaoAtual().proximaLocalizacao(localizacaoDestino);
             // Se a próxima localização não está ocupada, atualiza a localização atual
-            if (!isLocationOccupied(proximaLocalizacao)) {
+            if (!localizacaoEstaOcupada(proximaLocalizacao)) {
                 setLocalizacaoAtual(proximaLocalizacao);
             }
         }
-    } 
-    
-    // Método que verifica se a localização está ocupada
-    private boolean isLocationOccupied(Localizacao localizacao) {
-        // Checa os cliente
+    }
+
+    /**
+     * Verifica se a localizacao especificada esta ocupada por outra entidade
+     * (atendente ou cliente).
+     * 
+     * @param localizacao Localizacao a ser verificada
+     * @return true se a localizacao estiver ocupada, false caso contrario.
+     */
+    private boolean localizacaoEstaOcupada(Localizacao localizacao) {
+        // Checa os clientes
         for (Cliente cliente : clientesExistentes) {
-            // Se a localizacao do cliente é igual a localizacao passada e o cliente não é o próprio cliente
+            // Se a localizacao do cliente é igual a localizacao passada e o cliente não é o
+            // próprio cliente
             if (cliente.getLocalizacaoAtual().equals(localizacao) && cliente != this) {
                 // Retorna true (ocupada)
                 return true;
@@ -115,53 +118,81 @@ public abstract class Cliente extends EntidadesCenario {
         return false;
     }
 
-    // Getter e Setter de Atendido e NaFila
-    public Boolean getNaFila(){
+    /**
+     * Verifica se o cliente esta na fila
+     * 
+     * @return true se o cliente esta na fila, false caso contrario.
+     */
+    public Boolean getNaFila() {
         return naFila;
     }
 
-    public void setAtendido(){
+    /**
+     * Define que o cliente foi atendido e removee ele da fila.
+     */
+    public void setAtendido() {
         atendido = true;
         setNaFila(false);
     }
 
-    public void setNaFila(Boolean naFila){
+    /**
+     * Define se o cliente esta na fila
+     * 
+     * @param naFila true para indicar que o cliente esta na fila, false caso
+     *               nao esteja
+     */
+    public void setNaFila(Boolean naFila) {
         this.naFila = naFila;
     }
 
-    // Get de Atendentes Disponíveis
-    public List<Atendente> getAtendentesDisponiveis(){
+    /**
+     * Retorna a lista de atendentes disponiveis para o cliente.
+     * 
+     * @return Lista (List<Atendente>) de atendentes disponiveis.
+     */
+    public List<Atendente> getAtendentesDisponiveis() {
         return atendentesDisponiveis;
     }
 
-    public void setCientesExistentes(List<Cliente> clientesExistentes){
+    /**
+     * Atualiza a lista de clientes existentes no sistema
+     * 
+     * @param clientesExistentes Nova lista de clientes
+     */
+    public void setCientesExistentes(List<Cliente> clientesExistentes) {
         this.clientesExistentes = clientesExistentes;
     }
 
-    // Setter de Atendente Escolhido
-    public void setAtendenteEscolhido(Atendente atendenteEscolhido){
+    /**
+     * Define o atendente escolhido para atender o cliente
+     * 
+     * @param atendenteEscolhido Atendente selecionado
+     */
+    public void setAtendenteEscolhido(Atendente atendenteEscolhido) {
         this.atendenteEscolhido = atendenteEscolhido;
     }
 
-    // Método que faz o cliente entrar na fila
-    public void entrarEmFila(){
-        // Se não está na fila
-        if(!getNaFila()){          
+    /**
+     * Faz o cliente entrar em uma fila de atendimento.
+     * O cliente escolhe um atendente e se posiciona na entrada da fila
+     */
+    public void entrarEmFila() {
+        // Se nao esta na fila
+        if (!getNaFila()) {
             // Seta o destino como o atendente escolhido
-            setLocalizacaoDestino(atendenteEscolhido.getPosicaoEntradaFila()); 
+            setLocalizacaoDestino(atendenteEscolhido.getPosicaoEntradaFila());
             // Confere se entrou em alguma das filas
-            List<Atendente> atendentesDisponiveis =  getAtendentesDisponiveis();
-            for(Atendente atendente: atendentesDisponiveis){
-                if(atendente.getPosicaoEntradaFila() == getLocalizacaoAtual()){
+            List<Atendente> atendentesDisponiveis = getAtendentesDisponiveis();
+            for (Atendente atendente : atendentesDisponiveis) {
+                if (atendente.getPosicaoEntradaFila() == getLocalizacaoAtual()) {
                     // Seta na fila, e adiciona o cliente a fila
                     setNaFila(true);
                     atendente.adicionarCliente(this);
                 }
             }
-               
         }
     }
 
-    //Metódo que calcula o atendente disponível com a menor fila
+    // Metódo que calcula o atendente disponível com a menor fila
     public abstract void escolherAtendente();
 }

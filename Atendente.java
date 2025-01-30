@@ -41,22 +41,40 @@ public class Atendente extends EntidadesCenario{
         fila = new Fila(new Localizacao(getLocalizacaoAtual().getX()+1, getLocalizacaoAtual().getY()));
     }
 
-    // Retorna se é preferencial ou comum
+    /**
+     * Retorna o tipo do atendente (preferencial ou comum)
+     * 
+     * @return tipo do atendente.
+     */
     public String getTipo(){
         return tipoAtendente;
     }
 
-    // Retorna quantos clientes tem na sua fila
+    /**
+     * Retorna a quantidade de clientes na fila do atendente
+     * 
+     * @return numero de clientes na fila.
+     */
     public int getTamanhoFila(){
         return fila.getTamanho();
     }
 
-    // Retorna a posição de entrada na fila
+
+    /**
+     * Retorna a posicao de entrada da fila do atendente.
+     * 
+     * @return Localizacao da entrada da fila.
+     */
     public Localizacao getPosicaoEntradaFila(){
         return fila.getPosicaoEntrada();
     }
 
-    // Atende o cliente
+    /**
+     * Realiza o atendimento de um cliente na fila:
+     * Define um tempo de atendimento aleatorio entre 8 e 15,
+     * verifica se ha clientes na fila e, ao finalizar o tempo,
+     * remove o cliente atendido.
+     */
     public void atenderCliente(){
         // Se não está atendentendo, começa a atender
         if(!atendendo){
@@ -80,22 +98,30 @@ public class Atendente extends EntidadesCenario{
         }
     }
 
-    // Adiciona um cliente na fila
+    /**
+     * Adiciona um cliente na fila do atendente
+     * 
+     * @param cliente - cliente a ser adicionado na fila.
+     */
     public void adicionarCliente(Cliente cliente){
         fila.adicionarCliente(cliente);
     }
 
-    // Executa a ação do atendente
+    /**
+     * Executa a acao do atendente, verificando se ha clientes
+     * para atender e atualizando o estado do atendimento.
+     */
     public void executarAcao(){
-        // Se está atendendo, incrementa o timer e tenta atender o cliente
+        // Se esta atendendo, incrementa o timer e tenta atender o cliente
         if(atendendo){
             timer++;
             atenderCliente();
         }
-        // Se não está atendendo e tem alguém na fila, atende o cliente
+        // Se nao esta atendendo e tem alguem na fila, atende o cliente
         if(!atendendo && fila.getTamanho()>0){
             atenderCliente();
         }
     }
+
 
 }

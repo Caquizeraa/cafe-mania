@@ -7,7 +7,7 @@ import java.awt.Image;
  * no ambiente e uma imagem, é uma boa prática criar uma superclasse que contenha
  * esses atributos.
  * 
- * @author Otávio Sbampato e Isac Cunha
+ * @author Pedro MIlitão e Gabriel Coelho Costa
  * @version 1.0
  * @see Localizacao
  * @see Image
